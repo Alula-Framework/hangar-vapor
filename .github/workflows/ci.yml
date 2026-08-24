@@ -66,10 +66,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 6.2 rather than the 6.3.3 the Linux job uses: setup-swift does not
+      # index 6.3 yet. It satisfies this package's tools version.
       - name: Set up Swift
         uses: swift-actions/setup-swift@v2
         with:
-          swift-version: "6.3"
+          swift-version: "6.2"
 
       # macOS runners have no Docker and GitHub service containers are
       # Linux-only, so the integration suite cannot run here. This job proves
