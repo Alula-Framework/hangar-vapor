@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test (Swift ${{ matrix.swift }})
+    runs-on: ubuntu-latest
+    container: swift:${{ matrix.swift }}
+    strategy:
+      fail-fast: false
+      matrix:
+        swift: ["6.3.3"]
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: hangar_vapor_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build (warnings are errors)
+        run: swift build -Xswiftc -warnings-as-errors
+
+      # Fails rather than silently skipping if the database is unreachable.
+      # These tests exist to prove behaviour against a real pool; a green run
+      # that skipped all of them proves nothing.
+      # Written without bash-only syntax: the Swift image's default shell for
+      # a `run:` step is sh, where ${!var} is a syntax error.
+      - name: Verify the integration gate is armed
+        env:
+          HANGAR_VAPOR_TEST_DATABASE_URL: postgres://postgres:postgres@postgres:5432/hangar_vapor_test
+        run: |
+          [ -n "$HANGAR_VAPOR_TEST_DATABASE_URL" ] || {
+            echo "::error::integration tests would skip — the database URL is unset"
+            exit 1
+          }
+
+      - name: Test
+        env:
+          HANGAR_VAPOR_TEST_DATABASE_URL: postgres://postgres:postgres@postgres:5432/hangar_vapor_test
+        run: ./CI/run-tests.sh
+
+  macos:
+    name: Build on macOS
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "6.3"
+
+      # macOS runners have no Docker and GitHub service containers are
+      # Linux-only, so the integration suite cannot run here. This job proves
+      # the platform claim in Package.swift compiles.
+      - name: Build (warnings are errors)
+        run: swift build -Xswiftc -warnings-as-errors
