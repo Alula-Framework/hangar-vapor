@@ -16,9 +16,9 @@ let package = Package(
         .library(name: "HangarVapor", targets: ["HangarVapor"])
     ],
     dependencies: [
-        // Needs 0.2.0: soft delete, pagination and CTEs all landed after
-        // the 0.1.0 tag, and the generated `ColumnDefinition` shape changed
-        // with them. To develop against a checkout instead:
+        // 0.2.0 or later: soft delete, pagination and CTEs landed after the
+        // 0.1.0 tag, and the generated `ColumnDefinition` shape changed with
+        // them. To develop against a checkout instead:
         //   ./scripts/dev-link.sh ../hangar   (and --undo before committing)
         .package(url: "https://github.com/Swift-Flight/hangar.git", from: "0.2.0"),
         .package(url: "https://github.com/vapor/vapor.git", from: "4.106.0"),

@@ -16,9 +16,12 @@ touched. They share a database and coexist in the same handler.
 
 ## Status
 
-Pre-release. Waiting on hangar v0.2.0 — soft delete, pagination and CTEs all
-landed after hangar's 0.1.0 tag and this package uses the API they came with.
-Until that tag exists, develop against a checkout:
+Early. The surface is three things and unlikely to grow much; what will
+change is what Hangar itself gains underneath. Requires hangar 0.2.0 or
+later.
+
+To develop against a hangar checkout rather than the published tag — when a
+change is landing in both at once:
 
 ```bash
 ./scripts/dev-link.sh ../hangar     # point Package.swift at a local hangar
