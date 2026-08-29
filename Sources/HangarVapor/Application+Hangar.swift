@@ -41,7 +41,10 @@ extension Application {
             let client: PostgresClient
             let task: Task<Void, Never>
 
-            init(client: PostgresClient, logger: Logger) {
+            // No logger parameter: `PostgresClient` was handed its
+            // `backgroundLogger` at construction, so one here was only ever
+            // an unused argument at the single call site.
+            init(client: PostgresClient) {
                 self.client = client
                 // PostgresClient does nothing until `run()` is running: it
                 // is the pool. Detached because it must outlive whatever
@@ -66,7 +69,7 @@ extension Application {
         ) {
             let logger = backgroundLogger ?? application.logger
             let client = PostgresClient(configuration: configuration, backgroundLogger: logger)
-            let running = RunningClient(client: client, logger: logger)
+            let running = RunningClient(client: client)
             application.storage[ClientKey.self] = running
             application.lifecycle.use(Lifecycle())
         }
