@@ -14,7 +14,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-url_line='        .package(url: "https://github.com/Swift-Flight/hangar.git", from: "0.2.0"),'
+url_line='        .package(url: "https://github.com/Flight-Framework/hangar.git", from: "0.3.0"),'
 
 if [ "${1:-}" = "--undo" ]; then
   if grep -q '.package(path:' Package.swift; then
@@ -40,7 +40,7 @@ python3 - "$target" <<'PY'
 import re, sys, pathlib
 p = pathlib.Path("Package.swift")
 text = re.sub(
-    r'^ *\.package\(url: "https://github\.com/Swift-Flight/hangar\.git".*$',
+    r'^ *\.package\(url: "https://github\.com/Flight-Framework/hangar\.git".*$',
     f'        .package(path: "{sys.argv[1]}"),',
     p.read_text(), flags=re.M)
 p.write_text(text)

@@ -1,6 +1,6 @@
 # HangarVapor
 
-[Hangar](https://github.com/Swift-Flight/hangar) in a Vapor application.
+[Hangar](https://github.com/Flight-Framework/hangar) in a Vapor application.
 
 Hangar is a Postgres query layer built directly on PostgresNIO. It has no
 framework coupling — `Repo` takes a connection source and nothing else —
@@ -17,7 +17,7 @@ touched. They share a database and coexist in the same handler.
 ## Status
 
 Early. The surface is three things and unlikely to grow much; what will
-change is what Hangar itself gains underneath. Requires hangar 0.2.0 or
+change is what Hangar itself gains underneath. Requires hangar 0.3.0 or
 later.
 
 To develop against a hangar checkout rather than the published tag — when a
@@ -31,7 +31,7 @@ change is landing in both at once:
 ## Installation
 
 ```swift
-.package(url: "https://github.com/Swift-Flight/hangar-vapor.git", from: "0.1.0"),
+.package(url: "https://github.com/Flight-Framework/hangar-vapor.git", from: "0.1.0"),
 ```
 
 ```swift
