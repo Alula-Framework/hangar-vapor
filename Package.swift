@@ -17,9 +17,10 @@ let package = Package(
     ],
     dependencies: [
         // 0.6.0 or later. The floor moves with what this package is tested
-        // against rather than with what it happens to compile against: a
-        // committed Package.resolved held hangar at 0.4.0 for two releases
-        // while the floor said 0.3.0 and nothing noticed either number.
+        // against rather than with what it happens to compile against: it said
+        // 0.3.0 while hangar shipped 0.5.0, 0.5.1 and 0.6.0, and no run here
+        // ever saw any of them — CI last fired on 2026-08-31, the day 0.4.0
+        // was tagged.
         // To develop against a checkout instead:
         //   ./scripts/dev-link.sh ../hangar   (and --undo before committing)
         .package(url: "https://github.com/Flight-Framework/hangar.git", from: "0.6.0"),
