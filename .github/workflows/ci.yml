@@ -48,6 +48,17 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+    # Into a directory of this package's own name, and everything runs there.
+    # When hangar calls this workflow the workspace is /__w/hangar/hangar, so a
+    # checkout at the root puts *this* package in a directory called `hangar` —
+    # and SwiftPM takes a package's identity from its directory. The root
+    # package then claims the identity `hangar`, the path dependency below
+    # claims it too, and the root wins: "product 'Hangar' ... not found in
+    # package 'hangar'", reported against a manifest that plainly declares it.
+    defaults:
+      run:
+        working-directory: hangar-vapor
+
     steps:
       # Named, because inside a called workflow a bare checkout clones hangar
       # rather than this package.
@@ -55,6 +66,7 @@ jobs:
         with:
           repository: Flight-Framework/hangar-vapor
           ref: ${{ inputs.hangar_ref != '' && 'main' || github.sha }}
+          path: hangar-vapor
 
       - name: Check out the hangar commit under review
         if: inputs.hangar_ref != ''
@@ -62,7 +74,7 @@ jobs:
         with:
           repository: Flight-Framework/hangar
           ref: ${{ inputs.hangar_ref }}
-          path: .deps/hangar
+          path: hangar-vapor/.deps/hangar
 
       # sed rather than the python dev-link.sh uses: the Swift images are slim
       # and ship no python3, which is how flight-data's equivalent step died
@@ -78,13 +90,13 @@ jobs:
             echo "::error::manifest rewrite did not take"
             exit 1
           }
-          # Diagnostics: the first run of this step produced a manifest that
-          # pointed at a package SwiftPM said had no `Hangar` product, and the
-          # only way to tell an empty checkout from a wrong one is to look.
-          echo "--- .deps/hangar ---"
-          ls -la .deps/hangar | head -20
-          echo "--- its products ---"
-          grep -n 'library(name:' .deps/hangar/Package.swift | head -5 || echo "NO MANIFEST THERE"
+          # Kept: this is what proved the checkout was fine and the identity
+          # was not, when the error pointed at a manifest that declares the
+          # product it said was missing.
+          grep -q 'library(name: "Hangar"' .deps/hangar/Package.swift || {
+            echo "::error::.deps/hangar is not a hangar checkout"
+            exit 1
+          }
 
       - name: Build (warnings are errors)
         run: swift build -Xswiftc -warnings-as-errors
