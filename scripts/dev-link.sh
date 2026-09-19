@@ -14,7 +14,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-url_line='        .package(url: "https://github.com/Flight-Framework/hangar.git", from: "0.6.0"),'
+url_line='        .package(url: "https://github.com/Flight-Framework/hangar.git", from: "0.7.0"),'
 
 if [ "${1:-}" = "--undo" ]; then
   if grep -q '.package(path:' Package.swift; then

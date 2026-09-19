@@ -17,7 +17,7 @@ touched. They share a database and coexist in the same handler.
 ## Status
 
 Early. The surface is three things and unlikely to grow much; what will
-change is what Hangar itself gains underneath. Requires hangar 0.6.0 or
+change is what Hangar itself gains underneath. Requires hangar 0.7.0 or
 later.
 
 To develop against a hangar checkout rather than the published tag — when a

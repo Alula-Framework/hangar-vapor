@@ -23,7 +23,7 @@ let package = Package(
         // was tagged.
         // To develop against a checkout instead:
         //   ./scripts/dev-link.sh ../hangar   (and --undo before committing)
-        .package(url: "https://github.com/Flight-Framework/hangar.git", from: "0.6.0"),
+        .package(url: "https://github.com/Flight-Framework/hangar.git", from: "0.7.0"),
         .package(url: "https://github.com/vapor/vapor.git", from: "4.106.0"),
         .package(url: "https://github.com/vapor/postgres-nio.git", from: "1.21.0"),
     ],
