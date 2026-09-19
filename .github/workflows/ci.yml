@@ -78,6 +78,13 @@ jobs:
             echo "::error::manifest rewrite did not take"
             exit 1
           }
+          # Diagnostics: the first run of this step produced a manifest that
+          # pointed at a package SwiftPM said had no `Hangar` product, and the
+          # only way to tell an empty checkout from a wrong one is to look.
+          echo "--- .deps/hangar ---"
+          ls -la .deps/hangar | head -20
+          echo "--- its products ---"
+          grep -n 'library(name:' .deps/hangar/Package.swift | head -5 || echo "NO MANIFEST THERE"
 
       - name: Build (warnings are errors)
         run: swift build -Xswiftc -warnings-as-errors
