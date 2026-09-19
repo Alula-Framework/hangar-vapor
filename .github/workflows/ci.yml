@@ -62,7 +62,7 @@ jobs:
         with:
           repository: Flight-Framework/hangar
           ref: ${{ inputs.hangar_ref }}
-          path: .hangar-under-review
+          path: .deps/hangar
 
       # sed rather than the python dev-link.sh uses: the Swift images are slim
       # and ship no python3, which is how flight-data's equivalent step died
@@ -70,8 +70,11 @@ jobs:
       - name: Point the manifest at it
         if: inputs.hangar_ref != ''
         run: |
-          sed -i 's|.package(url: "https://github.com/Flight-Framework/hangar.git", from: "[0-9.]*"),|.package(path: ".hangar-under-review"),|' Package.swift
-          grep -q 'hangar-under-review' Package.swift || {
+          # The directory's last component becomes the package identity, so it
+          # has to be `hangar` — the target says `package: "hangar"`, and a path
+          # ending in anything else fails with "unknown package 'hangar'".
+          sed -i 's|.package(url: "https://github.com/Flight-Framework/hangar.git", from: "[0-9.]*"),|.package(path: ".deps/hangar"),|' Package.swift
+          grep -q '.deps/hangar' Package.swift || {
             echo "::error::manifest rewrite did not take"
             exit 1
           }
