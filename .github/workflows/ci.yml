@@ -5,9 +5,22 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # hangar calls this so a change there is tested against the package that
+  # wraps it. Without it, this workflow only ran when this repository was
+  # pushed to — which last happened in August, while a committed
+  # Package.resolved quietly held hangar at 0.4.0 through two releases.
+  workflow_call:
+    inputs:
+      hangar_ref:
+        description: "The hangar commit to build this package against."
+        type: string
+        default: ""
 
+# The literal prefix is load-bearing: inside a called workflow the `github`
+# context is the *caller's*, so without it this group is the one hangar's own
+# run already holds, and cancel-in-progress means this never starts.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: hangar-vapor-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -36,7 +49,32 @@ jobs:
           --health-retries 5
 
     steps:
+      # Named, because inside a called workflow a bare checkout clones hangar
+      # rather than this package.
       - uses: actions/checkout@v4
+        with:
+          repository: Flight-Framework/hangar-vapor
+          ref: ${{ inputs.hangar_ref != '' && 'main' || github.sha }}
+
+      - name: Check out the hangar commit under review
+        if: inputs.hangar_ref != ''
+        uses: actions/checkout@v4
+        with:
+          repository: Flight-Framework/hangar
+          ref: ${{ inputs.hangar_ref }}
+          path: .hangar-under-review
+
+      # sed rather than the python dev-link.sh uses: the Swift images are slim
+      # and ship no python3, which is how flight-data's equivalent step died
+      # with exit 127 the first time it was ever reached.
+      - name: Point the manifest at it
+        if: inputs.hangar_ref != ''
+        run: |
+          sed -i 's|.package(url: "https://github.com/Flight-Framework/hangar.git", from: "[0-9.]*"),|.package(path: ".hangar-under-review"),|' Package.swift
+          grep -q 'hangar-under-review' Package.swift || {
+            echo "::error::manifest rewrite did not take"
+            exit 1
+          }
 
       - name: Build (warnings are errors)
         run: swift build -Xswiftc -warnings-as-errors
@@ -44,16 +82,17 @@ jobs:
       # Fails rather than silently skipping if the database is unreachable.
       # These tests exist to prove behaviour against a real pool; a green run
       # that skipped all of them proves nothing.
-      # Written without bash-only syntax: the Swift image's default shell for
-      # a `run:` step is sh, where ${!var} is a syntax error.
+      #
+      # This used to test whether the variable was empty, in a step that set it
+      # to a literal on the line above — it could never fire. What actually
+      # goes wrong is the service, so open the socket instead.
       - name: Verify the integration gate is armed
-        env:
-          HANGAR_VAPOR_TEST_DATABASE_URL: postgres://postgres:postgres@postgres:5432/hangar_vapor_test
         run: |
-          [ -n "$HANGAR_VAPOR_TEST_DATABASE_URL" ] || {
-            echo "::error::integration tests would skip — the database URL is unset"
+          if ! timeout 10 bash -c 'cat < /dev/null > /dev/tcp/postgres/5432' 2>/dev/null; then
+            echo "::error::postgres:5432 is unreachable — the integration tests would skip"
             exit 1
-          }
+          fi
+          echo "postgres:5432 is reachable"
 
       - name: Test
         env:
@@ -62,20 +101,13 @@ jobs:
 
   macos:
     name: Build on macOS
-    runs-on: macos-15
-    # Advisory, and the reason is upstream rather than here.
-    #
-    # apple/swift-configuration 1.2.0 — the latest release — does not
-    # compile on Darwin: FileProvider.swift reaches for `Data.bytes`, which
-    # exists on the Linux Foundation it was written against and not on the
-    # Darwin one. Pulled in transitively through Vapor, so nothing in this
-    # package can fix it, and pinning to an unreleased main is worse than
-    # knowing. Same finding as flight and flight-data, which hit the same
-    # dependency directly.
-    #
-    # Drop this line the moment upstream ships a fix. A permanently red
-    # required check just teaches people to ignore CI.
-    continue-on-error: true
+    runs-on: macos-26
+    # swift-configuration's FileProvider takes FoundationEssentials where the
+    # SDK offers it and Foundation otherwise, and only the latter lacks the
+    # `Data.bytes` it wants. That made this job red on macos-15 and was read as
+    # an upstream blocker nothing here could fix. It is an SDK question: on
+    # macos-26 flight builds with its deployment target untouched, measured
+    # both ways. Same fix here, and the advisory flag comes off with it.
     steps:
       - uses: actions/checkout@v4
 

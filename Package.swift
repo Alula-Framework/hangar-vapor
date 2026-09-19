@@ -16,11 +16,13 @@ let package = Package(
         .library(name: "HangarVapor", targets: ["HangarVapor"])
     ],
     dependencies: [
-        // 0.2.0 or later: soft delete, pagination and CTEs landed after the
-        // 0.1.0 tag, and the generated `ColumnDefinition` shape changed with
-        // them. To develop against a checkout instead:
+        // 0.6.0 or later. The floor moves with what this package is tested
+        // against rather than with what it happens to compile against: a
+        // committed Package.resolved held hangar at 0.4.0 for two releases
+        // while the floor said 0.3.0 and nothing noticed either number.
+        // To develop against a checkout instead:
         //   ./scripts/dev-link.sh ../hangar   (and --undo before committing)
-        .package(url: "https://github.com/Flight-Framework/hangar.git", from: "0.3.0"),
+        .package(url: "https://github.com/Flight-Framework/hangar.git", from: "0.6.0"),
         .package(url: "https://github.com/vapor/vapor.git", from: "4.106.0"),
         .package(url: "https://github.com/vapor/postgres-nio.git", from: "1.21.0"),
     ],
