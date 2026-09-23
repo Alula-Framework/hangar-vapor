@@ -4,6 +4,15 @@ All notable changes are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-09-23
+
+### Changed
+
+- **The organization is now Alula-Framework**, after Flight was renamed
+  Alula. Hangar is required at 0.9.2, the release that points at
+  swift-changeset's new URL. GitHub redirects the old URLs, and the API is
+  unchanged.
+
 ## [0.2.0] - 2026-09-19
 
 No API change. The surface is still three things: a pool on `Application`, a

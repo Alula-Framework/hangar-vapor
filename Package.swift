@@ -3,7 +3,7 @@
 //
 // Deliberately a separate package. Hangar has no framework coupling and
 // should keep none; a Vapor app should not have to care that Hangar could
-// also be used from Flight, a script, or a job runner. This package is the
+// also be used from Alula, a script, or a job runner. This package is the
 // thin seam between the two, and nothing else depends on it.
 import PackageDescription
 
@@ -23,7 +23,7 @@ let package = Package(
         // was tagged.
         // To develop against a checkout instead:
         //   ./scripts/dev-link.sh ../hangar   (and --undo before committing)
-        .package(url: "https://github.com/Flight-Framework/hangar.git", from: "0.9.0"),
+        .package(url: "https://github.com/Alula-Framework/hangar.git", from: "0.9.2"),
         .package(url: "https://github.com/vapor/vapor.git", from: "4.106.0"),
         .package(url: "https://github.com/vapor/postgres-nio.git", from: "1.21.0"),
     ],

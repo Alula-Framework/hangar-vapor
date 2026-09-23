@@ -1,6 +1,6 @@
 # HangarVapor
 
-[Hangar](https://github.com/Flight-Framework/hangar) in a Vapor application.
+[Hangar](https://github.com/Alula-Framework/hangar) in a Vapor application.
 
 Hangar is a Postgres query layer built directly on PostgresNIO. It has no
 framework coupling — `Repo` takes a connection source and nothing else —
@@ -31,7 +31,7 @@ change is landing in both at once:
 ## Installation
 
 ```swift
-.package(url: "https://github.com/Flight-Framework/hangar-vapor.git", from: "0.1.0"),
+.package(url: "https://github.com/Alula-Framework/hangar-vapor.git", from: "0.1.0"),
 ```
 
 ```swift

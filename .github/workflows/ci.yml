@@ -64,7 +64,7 @@ jobs:
       # rather than this package.
       - uses: actions/checkout@v4
         with:
-          repository: Flight-Framework/hangar-vapor
+          repository: Alula-Framework/hangar-vapor
           ref: ${{ inputs.hangar_ref != '' && 'main' || github.sha }}
           path: hangar-vapor
 
@@ -72,12 +72,12 @@ jobs:
         if: inputs.hangar_ref != ''
         uses: actions/checkout@v4
         with:
-          repository: Flight-Framework/hangar
+          repository: Alula-Framework/hangar
           ref: ${{ inputs.hangar_ref }}
           path: hangar-vapor/.deps/hangar
 
       # sed rather than the python dev-link.sh uses: the Swift images are slim
-      # and ship no python3, which is how flight-data's equivalent step died
+      # and ship no python3, which is how alula-data's equivalent step died
       # with exit 127 the first time it was ever reached.
       - name: Point the manifest at it
         if: inputs.hangar_ref != ''
@@ -85,7 +85,7 @@ jobs:
           # The directory's last component becomes the package identity, so it
           # has to be `hangar` — the target says `package: "hangar"`, and a path
           # ending in anything else fails with "unknown package 'hangar'".
-          sed -i 's|.package(url: "https://github.com/Flight-Framework/hangar.git", from: "[0-9.]*"),|.package(path: ".deps/hangar"),|' Package.swift
+          sed -i 's|.package(url: "https://github.com/Alula-Framework/hangar.git", from: "[0-9.]*"),|.package(path: ".deps/hangar"),|' Package.swift
           grep -q '.deps/hangar' Package.swift || {
             echo "::error::manifest rewrite did not take"
             exit 1
@@ -128,7 +128,7 @@ jobs:
     # SDK offers it and Foundation otherwise, and only the latter lacks the
     # `Data.bytes` it wants. That made this job red on macos-15 and was read as
     # an upstream blocker nothing here could fix. It is an SDK question: on
-    # macos-26 flight builds with its deployment target untouched, measured
+    # macos-26 alula builds with its deployment target untouched, measured
     # both ways. Same fix here, and the advisory flag comes off with it.
     steps:
       - uses: actions/checkout@v4
