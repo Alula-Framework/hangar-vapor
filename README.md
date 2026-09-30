@@ -32,7 +32,7 @@ change is landing in both at once:
 ## Installation
 
 ```swift
-.package(url: "https://github.com/Alula-Framework/hangar-vapor.git", from: "0.2.1"),
+.package(url: "https://github.com/Alula-Framework/hangar-vapor.git", from: "0.2.2"),
 ```
 
 ```swift
