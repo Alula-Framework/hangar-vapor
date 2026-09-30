@@ -110,6 +110,7 @@ actor DatabaseFixture {
 ///
 /// The whole body runs under ``DatabaseFixture``, so two suites never share
 /// the table's contents.
+@discardableResult
 func withHangarApp<T: Sendable>(
     configure extra: (@Sendable (Application) async throws -> Void)? = nil,
     _ test: @Sendable (Application) async throws -> T

@@ -98,8 +98,10 @@ jobs:
             exit 1
           }
 
+      # Tests included: some of them are compile-level claims — an unused
+      # req.transaction result must not warn — that only this flag checks.
       - name: Build (warnings are errors)
-        run: swift build -Xswiftc -warnings-as-errors
+        run: swift build --build-tests -Xswiftc -warnings-as-errors
 
       # Fails rather than silently skipping if the database is unreachable.
       # These tests exist to prove behaviour against a real pool; a green run

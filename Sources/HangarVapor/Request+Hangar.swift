@@ -37,12 +37,15 @@ extension Request {
     /// ```
     ///
     /// Throwing from `body` rolls back. Nested calls become savepoints.
+    /// The result is the body's, and may go unused — a body that ends in
+    /// `insert` does not need `_ =`, as with hangar's own `transaction`.
     ///
     /// The ambient binding means a service or repository type that calls
     /// `Repo.require()` joins this transaction without the handler
     /// threading a repo through every signature. It propagates to
     /// structured child tasks and *not* across `Task.detached` — a
     /// background job must not silently join a request's transaction.
+    @discardableResult
     public func transaction<T: Sendable>(
         _ body: (Repo) async throws -> T
     ) async throws -> T {

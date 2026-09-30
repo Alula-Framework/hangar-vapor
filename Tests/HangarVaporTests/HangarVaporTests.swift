@@ -64,6 +64,27 @@ struct HangarVaporTests {
         }
     }
 
+    @Test("req.transaction's result can go unused, as hangar's can")
+    func transactionResultIsDiscardable() async throws {
+        // Compile-level: the body returns the inserted Widget and nothing
+        // reads it. Without @discardableResult this warns "result of call to
+        // 'transaction' is unused", and CI builds the tests with
+        // -warnings-as-errors.
+        try await withHangarApp { app in
+            app.post("discard") { req async throws -> HTTPStatus in
+                try await req.transaction { db in
+                    try await db.insert(Widget(id: UUID(), name: "kept"))
+                }
+                return .created
+            }
+
+            try await app.testing().test(.POST, "discard") { res async in
+                #expect(res.status == .created)
+            }
+            #expect(try await app.hangar.repo.count(Widget.all) == 1)
+        }
+    }
+
     @Test("req.transaction rolls back when the handler throws")
     func transactionRollsBack() async throws {
         try await withHangarApp { app in

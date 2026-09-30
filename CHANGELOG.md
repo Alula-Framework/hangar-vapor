@@ -4,6 +4,20 @@ All notable changes are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- **`req.transaction` is `@discardableResult`**, as hangar's `transaction`
+  has been since 0.16.1. A body that ends in `insert`, as the README's does,
+  warned "result of call to 'transaction' is unused".
+
+### Changed
+
+- **CI builds the tests with `-warnings-as-errors`**, so the test proving
+  the above is a compile-level check. `withHangarApp` is
+  `@discardableResult` too, for the one test whose result went unused.
+
 ## [0.2.1] - 2026-09-23
 
 ### Changed
