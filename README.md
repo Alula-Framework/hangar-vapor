@@ -17,8 +17,9 @@ touched. They share a database and coexist in the same handler.
 ## Status
 
 Early. The surface is three things and unlikely to grow much; what will
-change is what Hangar itself gains underneath. Requires hangar 0.9.0 or
-later.
+change is what Hangar itself gains underneath. Requires hangar 0.9.2 or
+later; hangar's CI builds this package on every commit, so the current
+release is what it is tested against.
 
 To develop against a hangar checkout rather than the published tag — when a
 change is landing in both at once:
@@ -31,7 +32,7 @@ change is landing in both at once:
 ## Installation
 
 ```swift
-.package(url: "https://github.com/Alula-Framework/hangar-vapor.git", from: "0.1.0"),
+.package(url: "https://github.com/Alula-Framework/hangar-vapor.git", from: "0.2.1"),
 ```
 
 ```swift
@@ -127,7 +128,10 @@ request commits.
 
 No Fluent bridge — the two are separate query layers over the same database,
 and pretending otherwise would mean reimplementing one in terms of the other.
-No migrations; use whatever you already use. No `EventLoopFuture` API — this
+No migrations; use whatever you already use. alula-data's
+[`AlulaMigrate`](https://github.com/Alula-Framework/alula-data/blob/main/Docs/migrate.md)
+is the one built beside Hangar, and runs from a bare executable as happily as
+from anything else. No `EventLoopFuture` API — this
 is `async`/`await` only, like Hangar itself.
 
 ## Running the tests

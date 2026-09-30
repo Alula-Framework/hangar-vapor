@@ -16,7 +16,7 @@ extension Application {
     ///
     /// ```swift
     /// // configure.swift
-    /// try app.hangar.use(.init(
+    /// app.hangar.use(.init(
     ///     host: Environment.get("DATABASE_HOST") ?? "localhost",
     ///     username: "postgres", password: "postgres", database: "app",
     ///     tls: .disable))

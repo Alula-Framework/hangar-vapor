@@ -16,11 +16,12 @@ let package = Package(
         .library(name: "HangarVapor", targets: ["HangarVapor"])
     ],
     dependencies: [
-        // 0.6.0 or later. The floor moves with what this package is tested
-        // against rather than with what it happens to compile against: it said
-        // 0.3.0 while hangar shipped 0.5.0, 0.5.1 and 0.6.0, and no run here
-        // ever saw any of them — CI last fired on 2026-08-31, the day 0.4.0
-        // was tagged.
+        // 0.9.2 or later: the release that points at swift-changeset's
+        // Alula-Framework URL. The floor moves with what this package is
+        // tested against rather than with what it happens to compile against:
+        // it once said 0.3.0 while hangar shipped 0.5.0, 0.5.1 and 0.6.0, and
+        // no run here saw any of them. hangar's CI now builds this package on
+        // every commit, so that drift cannot recur unseen.
         // To develop against a checkout instead:
         //   ./scripts/dev-link.sh ../hangar   (and --undo before committing)
         .package(url: "https://github.com/Alula-Framework/hangar.git", from: "0.9.2"),
